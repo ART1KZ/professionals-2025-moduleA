@@ -18,8 +18,7 @@ contract ERC20 is IERC20 {
         symbol = _symbol;
         totalSupply = _totalSupply;
         balanceOf[msg.sender] = _totalSupply;
-    };
-
+    }
 
     event Transfer(
         address indexed _sender,
