@@ -13,87 +13,93 @@ contract ERC20 is IERC20 {
     mapping(address => uint256) public balanceOf;
     mapping(address => mapping(address => uint256)) public allowance;
 
-    constructor(string memory _name, string memory _symbol, uint256 _totalSupply) {
+    constructor(
+        string memory _name,
+        string memory _symbol,
+        uint256 _totalSupply
+    ) {
         name = _name;
         symbol = _symbol;
-        totalSupply = _totalSupply;
-        balanceOf[msg.sender] = _totalSupply;
+        mint(msg.sender, _totalSupply);
     }
 
-    event Transfer(
-        address indexed _sender,
-        address indexed _receiver,
-        uint256 amount
-    );
-    event Approval(
-        address indexed _owner,
-        address indexed _spender,
-        uint256 amount
-    );
-
-    modifier hasTokens(address _spender, uint256 _amount) {
-        require(balanceOf[_spender] >= _amount, "Not enough tokens");
+    modifier hasTokens(address _account, uint256 _value) {
+        require(balanceOf[_account] >= _value, "Not enough tokens");
         _;
     }
 
-    modifier validAddress(address _receiver) {
-        require(_receiver != address(0), "Not valid address");
+    modifier validAddress(address _to) {
+        require(_to != address(0), "Not valid address");
         _;
     }
 
     modifier hasAllowance(
         address _owner,
         address _spender,
-        uint256 _amount
+        uint256 _value
     ) {
-        require(allowance[_owner][_spender] >= _amount, "Not enough allowance");
+        require(allowance[_owner][_spender] >= _value, "Not enough allowance");
         _;
     }
 
     function transfer(
-        address _receiver,
-        uint256 _amount
-    )
-        external
-        override
-        hasTokens(msg.sender, _amount)
-        validAddress(_receiver)
-        returns (bool)
-    {
-        balanceOf[msg.sender] -= _amount;
-        balanceOf[_receiver] += _amount;
+        address _to,
+        uint256 _value
+    ) public hasTokens(msg.sender, _value) validAddress(_to) returns (bool) {
+        balanceOf[msg.sender] -= _value;
+        balanceOf[_to] += _value;
 
-        emit Transfer(msg.sender, _receiver, _amount);
+        emit Transfer(msg.sender, _to, _value);
         return true;
     }
 
     function transferFrom(
-        address _sender,
-        address _receiver,
-        uint256 _amount
+        address _from,
+        address _to,
+        uint256 _value
     )
-        external
-        override
-        hasAllowance(_sender, msg.sender, _amount)
-        hasTokens(_sender, _amount)
-        validAddress(_receiver)
+        public
+        hasAllowance(_from, msg.sender, _value)
+        hasTokens(_from, _value)
+        validAddress(_from)
+        validAddress(_to)
         returns (bool)
     {
-        allowance[_sender][msg.sender] -= _amount;
-        balanceOf[_sender] -= _amount;
-        balanceOf[_receiver] += _amount;
+        allowance[_from][msg.sender] -= _value;
+        balanceOf[_from] -= _value;
+        balanceOf[_to] += _value;
 
-        emit Transfer(_sender, _receiver, _amount);
+        emit Transfer(_from, _to, _value);
         return true;
     }
 
     function approve(
         address _spender,
-        uint256 _amount
-    ) external override validAddress(_spender) returns (bool) {
-        allowance[msg.sender][_spender] = _amount;
+        uint256 _value
+    ) public validAddress(_spender) returns (bool) {
+        allowance[msg.sender][_spender] = _value;
 
-        emit Approval(msg.sender, _spender, _amount);
+        emit Approval(msg.sender, _spender, _value);
         return true;
+    }
+
+    function mint(
+        address _account,
+        uint256 _value
+    ) public validAddress(_account) {
+        totalSupply += _value;
+        balanceOf[_account] += _value;
+
+        emit Transfer(address(0), _account, _value);
+    }
+
+    function burn(
+        address _account,
+        uint256 _value
+    ) public validAddress(_account) hasTokens(_account, _value) {
+        balanceOf[_account] -= _value;
+        totalSupply -= _value;
+
+        emit Transfer(_account, address(0), _value);
     }
 }
