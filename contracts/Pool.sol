@@ -69,12 +69,34 @@ contract Pool {
     }
 
     function swap(
-        address _tokenFrom,
-        address _tokenTo,
+        address _tokenIn,
         uint256 _amountIn
-    ) public validAddress(_tokenFrom) validAddress(_tokenTo) validAmount(_amountIn) {
-        // bool isTokenFromValid = _tokenFrom == address(tokenA) || _tokenFrom == address(tokenB);
+    )
+        public
+        validAddress(_tokenIn)
+        validAmount(_amountIn)
+    {
+        bool isTokenFromValid = _tokenIn == address(tokenA) || _tokenIn == address(tokenB);
+        bool isA = _tokenIn == address(tokenA);
+        require(isA || _tokenIn == address(tokenB), "Invalid token");
 
+        IERC20 tokenIn = isA ? tokenA : tokenB;
+        IERC20 tokenOut = isA ? tokenB : tokenA;
+        uint256 reserveIn = isA ? reserveA : reserveB;
+        uint256 reserveOut = isA ? reserveB : reserveA;
 
+        uint256 amountOut = (_amountIn * reserveOut) / (reserveIn + _amountIn);
+
+        tokenIn.transferFrom(msg.sender, address(this), _amountIn);
+        tokenOut.transferFrom(address(this), msg.sender, amountOut);
+
+        if(isA) {
+            reserveA += _amountIn;
+            reserveB -= amountOut;
+        } else {
+            reserveB += _amountIn;
+            reserveA -= amountOut;
+        }
+        
     }
 }
