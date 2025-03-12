@@ -1,105 +1,99 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.28;
+pragma solidity ^0.8.28;
 
-import "./interfaces/IERC20.sol";
-
-contract ERC20 is IERC20 {
+contract ERC20 {
     string public name;
     string public symbol;
     uint256 public totalSupply;
-    uint256 public decimals = 12;
+    uint8 public decimals;
 
     mapping(address => uint256) public balanceOf;
     mapping(address => mapping(address => uint256)) public allowance;
 
+    event Transfer(address indexed _from, address indexed _to, uint256 _amount);
+    event Approval(
+        address indexed _owner,
+        address indexed _spender,
+        uint256 _amount
+    );
+
     constructor(
         string memory _name,
         string memory _symbol,
-        uint256 _totalSupply
+        uint256 _totalSupply,
+        uint8 _decimals
     ) {
         name = _name;
         symbol = _symbol;
-        mint(msg.sender, _totalSupply);
+        _mint(msg.sender, _totalSupply);
+        decimals = _decimals;
     }
 
-    modifier hasTokens(address _account, uint256 _value) {
-        require(balanceOf[_account] >= _value, "Not enough tokens");
+    modifier validAddress(address _address) {
+        require(_address != address(0));
         _;
     }
 
-    modifier validAddress(address _to) {
-        require(_to != address(0), "Not valid address");
+    modifier hasBalance(address _account, uint256 _amount) {
+        require(balanceOf[_account] >= _amount, "Not enough tokens");
         _;
     }
 
-    modifier hasAllowance(
-        address _owner,
-        address _spender,
-        uint256 _value
-    ) {
-        require(allowance[_owner][_spender] >= _value, "Not enough allowance");
+    modifier hasAllowance(address _from, uint256 _amount) {
+        require(
+            allowance[_from][msg.sender] >= _amount,
+            "Not enough allowance"
+        );
         _;
     }
 
-    function transfer(
-        address _to,
-        uint256 _value
-    ) public hasTokens(msg.sender, _value) validAddress(_to) returns (bool) {
-        balanceOf[msg.sender] -= _value;
-        balanceOf[_to] += _value;
+    function transfer(address _to, uint256 _amount)
+        public
+        hasBalance(msg.sender, _amount)
+        validAddress(_to)
+        returns (bool)
+    {
+        balanceOf[msg.sender] -= _amount;
+        balanceOf[_to] += _amount;
 
-        emit Transfer(msg.sender, _to, _value);
+        emit Transfer(msg.sender, _to, _amount);
         return true;
     }
 
     function transferFrom(
         address _from,
         address _to,
-        uint256 _value
+        uint256 _amount
     )
         public
-        hasAllowance(_from, msg.sender, _value)
-        hasTokens(_from, _value)
         validAddress(_from)
         validAddress(_to)
+        hasAllowance(_from, _amount)
+        hasBalance(_from, _amount)
         returns (bool)
     {
-        allowance[_from][msg.sender] -= _value;
-        balanceOf[_from] -= _value;
-        balanceOf[_to] += _value;
+        allowance[_from][msg.sender] -= _amount;
+        balanceOf[_from] -= _amount;
+        balanceOf[_to] += _amount;
 
-        emit Transfer(_from, _to, _value);
+        emit Transfer(_from, _to, _amount);
         return true;
     }
 
-    function approve(
-        address _spender,
-        uint256 _value
-    ) public validAddress(_spender) returns (bool) {
-        allowance[msg.sender][_spender] = _value;
+    function approve(address _spender, uint256 _amount)
+        external
+        validAddress(_spender)
+        returns (bool)
+    {
+        allowance[msg.sender][_spender] = _amount;
 
-        emit Approval(msg.sender, _spender, _value);
+        emit Approval(msg.sender, _spender, _amount);
         return true;
     }
 
-    function mint(
-        address _account,
-        uint256 _value
-    ) public validAddress(_account) {
-        totalSupply += _value;
-        balanceOf[_account] += _value;
-
-        emit Transfer(address(0), _account, _value);
-    }
-
-    function burn(
-        address _account,
-        uint256 _value
-    ) public validAddress(_account) hasTokens(_account, _value) {
-        balanceOf[_account] -= _value;
-        totalSupply -= _value;
-
-        emit Transfer(_account, address(0), _value);
+    function _mint(address _to, uint256 _amount) internal validAddress(_to) {
+        totalSupply += _amount;
+        balanceOf[_to] += _amount;
     }
 }
