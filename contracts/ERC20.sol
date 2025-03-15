@@ -7,6 +7,7 @@ contract ERC20 {
     string public symbol;
     uint256 public totalSupply;
     uint8 public decimals;
+    uint256 public price;
 
     mapping(address => uint256) public balanceOf;
     mapping(address => mapping(address => uint256)) public allowance;
@@ -22,12 +23,14 @@ contract ERC20 {
         string memory _name,
         string memory _symbol,
         uint256 _totalSupply,
-        uint8 _decimals
+        uint8 _decimals,
+        uint256 _price
     ) {
         name = _name;
         symbol = _symbol;
-        _mint(msg.sender, _totalSupply);
+        mint(msg.sender, _totalSupply);
         decimals = _decimals;
+        price = _price;
     }
 
     modifier validAddress(address _address) {
@@ -35,7 +38,7 @@ contract ERC20 {
         _;
     }
 
-    modifier hasBalance(address _account, uint256 _amount) {
+    modifier enoughTokens(address _account, uint256 _amount) {
         require(balanceOf[_account] >= _amount, "Not enough tokens");
         _;
     }
@@ -49,8 +52,8 @@ contract ERC20 {
     }
 
     function transfer(address _to, uint256 _amount)
-        public
-        hasBalance(msg.sender, _amount)
+        external
+        enoughTokens(msg.sender, _amount)
         validAddress(_to)
         returns (bool)
     {
@@ -66,14 +69,14 @@ contract ERC20 {
         address _to,
         uint256 _amount
     )
-        public
+        external
         validAddress(_from)
         validAddress(_to)
-        hasAllowance(_from, _amount)
-        hasBalance(_from, _amount)
+        // hasAllowance(_from, _amount)
+        enoughTokens(_from, _amount)
         returns (bool)
     {
-        allowance[_from][msg.sender] -= _amount;
+        // allowance[_from][msg.sender] -= _amount;
         balanceOf[_from] -= _amount;
         balanceOf[_to] += _amount;
 
@@ -92,8 +95,13 @@ contract ERC20 {
         return true;
     }
 
-    function _mint(address _to, uint256 _amount) internal validAddress(_to) {
+    function mint(address _to, uint256 _amount) public validAddress(_to) {
         totalSupply += _amount;
         balanceOf[_to] += _amount;
+    }
+
+    function buy() external payable returns (uint256) {
+        mint(msg.sender, msg.value / price);
+        return msg.value / price;
     }
 }
