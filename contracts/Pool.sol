@@ -19,27 +19,44 @@ contract Pool {
         lpToken = ERC20(_lpToken);
     }
 
-    function addLiquidity(uint256 _firstTokenAmount, uint256 _secondTokenAmount) external {
+    function addLiquidity(uint256 _firstTokenAmount, uint256 _secondTokenAmount)
+        external
+    {
         firstToken.transferFrom(msg.sender, address(this), _firstTokenAmount);
         secondToken.transferFrom(msg.sender, address(this), _secondTokenAmount);
 
-        uint256 lpAmount = ((firstToken.price() * _firstTokenAmount) + (secondToken.price() * _secondTokenAmount)) / lpToken.price();
+        uint256 lpAmount = ((firstToken.price() * _firstTokenAmount) +
+            (secondToken.price() * _secondTokenAmount)) / lpToken.price();
         lpToken.mint(msg.sender, lpAmount);
     }
 
-    // function swap(bool _isSwappingFirstTokenToSecond, uint256 _amountIn) external {
-    //     ERC20 tokenIn = _isSwappingFirstTokenToSecond ? firstToken : secondToken;
-    //     ERC20 tokenOut = _isSwappingFirstTokenToSecond ? secondToken : firstToken;
+    function swap(bool _isSwapFirstTokenToSecond, uint256 _amount)
+        external
+    {
+        ERC20 tokenIn = _isSwapFirstTokenToSecond ? firstToken : secondToken;
+        ERC20 tokenOut = _isSwapFirstTokenToSecond ? secondToken : firstToken;
 
-    //     tokenIn.transferFrom(msg.sender, address(this), _amountIn);
+        uint256 amountOut = (_amount * tokenOut.balanceOf(address(this))) / tokenIn.balanceOf(address(this));
+        tokenIn.transferFrom(msg.sender, address(this), _amount);
+        tokenOut.transferFrom(address(this), msg.sender, amountOut);
+    }
 
-    //     uint256 amountOut = 1;
-    //     tokenOut.transferFrom(address(this), msg.sender, amountOut);
-    // }
-
-    function getInfo() view external returns(address firstTokenAddr, address secondTokenAddr, uint256 firstTokenReserve, uint256 secondTokenReserve) {
-        firstTokenAddr = address(firstToken);
-        secondTokenAddr = address(secondToken);
+    function getInfo()
+        external
+        view
+        returns (
+            address firstTokenAddress,
+            string memory firstTokenName,
+            address secondTokenAddress,
+            string memory secondTokenName,
+            uint256 firstTokenReserve,
+            uint256 secondTokenReserve
+        )
+    {
+        firstTokenAddress = address(firstToken);
+        firstTokenName = firstToken.name();
+        secondTokenAddress = address(secondToken);
+        secondTokenName = secondToken.name();
         firstTokenReserve = firstToken.balanceOf(address(this));
         secondTokenReserve = secondToken.balanceOf(address(this));
     }
