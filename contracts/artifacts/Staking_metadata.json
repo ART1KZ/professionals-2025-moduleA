@@ -1,0 +1,90 @@
+{
+	"compiler": {
+		"version": "0.8.28+commit.7893614a"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_lpToken",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_rewardPerSecond",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"inputs": [],
+				"name": "claimReward",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_amount",
+						"type": "uint256"
+					}
+				],
+				"name": "stake",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/Staking.sol": "Staking"
+		},
+		"evmVersion": "cancun",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/ERC20.sol": {
+			"keccak256": "0x75c55d6a3f8d4ab1d7bb25a6d17fd6f9a7e864a1561ef368cc243c4198251614",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://7ba5c29e9773de680c9cad584ea4f1d0055aac3570666a007e6e451345d13a10",
+				"dweb:/ipfs/QmX7fKCR7fqc5QYrrcVCjYpHEz8Hu1514Lx2hnSfVNn5RN"
+			]
+		},
+		"contracts/Staking.sol": {
+			"keccak256": "0x13843280de0462e72f534f0ac21750af463bb21d2e6c40e22fdf8de1eda4454c",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://713f91ccb2db2638c36222c4d5d869ef7d652e907c14600e49d859f92d73301c",
+				"dweb:/ipfs/QmNsRg56RssjT5q7u9dadDzNF74d28V3SZkeBDcY3uSUfJ"
+			]
+		}
+	},
+	"version": 1
+}

@@ -21,6 +21,16 @@
 						"internalType": "address",
 						"name": "_lpToken",
 						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_firstTokenETHInitAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_secondTokenETHInitAmount",
+						"type": "uint256"
 					}
 				],
 				"stateMutability": "nonpayable",
@@ -55,8 +65,13 @@
 					},
 					{
 						"internalType": "string",
-						"name": "firstTokenName",
+						"name": "firstTokenSymbol",
 						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "firstTokenWeiPrice",
+						"type": "uint256"
 					},
 					{
 						"internalType": "address",
@@ -65,8 +80,13 @@
 					},
 					{
 						"internalType": "string",
-						"name": "secondTokenName",
+						"name": "secondTokenSymbol",
 						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "secondTokenWeiPrice",
+						"type": "uint256"
 					},
 					{
 						"internalType": "uint256",
@@ -137,11 +157,11 @@
 			]
 		},
 		"contracts/Pool.sol": {
-			"keccak256": "0x113789e4ae706855f87c9c33911638e4d7fb01e9d86d698c5202babb9af95fa6",
+			"keccak256": "0xa3d53264456658166c9504e18012bf68c91c6eadc56b95a363585a2cae6a2db9",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://a21a21720ae5e346914146c9d45f050ae6bd5c92396ad748d3f1a276a74ef847",
-				"dweb:/ipfs/QmSKibcJ7zu1itRKN4Woxqtpes9cWFUJmiPUUXaGyuPB5V"
+				"bzz-raw://d2886a06201d2d7a03a7570c08443a95d28eb2fe43cb650078187be21c3dc369",
+				"dweb:/ipfs/QmVSPXgupMoRJ8oDnebThNNi2BNAYvrkggRvXCMnGoLAd3"
 			]
 		}
 	},

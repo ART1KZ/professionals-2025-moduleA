@@ -1,12 +1,12 @@
 {
-	"id": "b943d656fec2d37174ba5f67617d9759",
+	"id": "f454cec9858c1562ad8190269a601868",
 	"_format": "hh-sol-build-info-1",
 	"solcVersion": "0.8.28",
 	"solcLongVersion": "0.8.28+commit.7893614a",
 	"input": {
 		"language": "Solidity",
 		"sources": {
-			"contracts/Staking.sol": {
+			"contracts/Router.sol": {
 				"content": "// SPDX-License-Identifier: MIT\n\npragma solidity 0.8.28;"
 			}
 		},
@@ -40,9 +40,9 @@
 	},
 	"output": {
 		"sources": {
-			"contracts/Staking.sol": {
+			"contracts/Router.sol": {
 				"ast": {
-					"absolutePath": "contracts/Staking.sol",
+					"absolutePath": "contracts/Router.sol",
 					"exportedSymbols": {},
 					"id": 2,
 					"license": "MIT",
